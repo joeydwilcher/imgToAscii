@@ -1,5 +1,7 @@
 import sys
 import traceback
+import tkinter as tk
+import tkinter.font as font
 from PIL import Image
 
 ASCII_CHARS = ['.', ',', ':', ';', '-', '+', '|', 'V', 'N', 'M']
@@ -48,4 +50,24 @@ if __name__=='__main__':
 
         ascii_image = convert_image(image)
         print(ascii_image)
+
+        font_size=12
+
+        root = tk.Tk()
+        root.option_add('*Font', f'{font_size}')
+
+        asciiFont = font.Font(root=root, family="Square", size=9)
+
+        (original_width, original_height) = image.size
+        aspect_ratio = original_height/float(original_width)
+        new_height = int(aspect_ratio * DEFAULT_WIDTH)
+
+        root.geometry(f"{new_height}x{DEFAULT_WIDTH}")
+
+        text = tk.Text(root, height=(new_height * font_size), width=(DEFAULT_WIDTH * font_size), font=asciiFont)
+        text.pack()
+        text.insert(tk.END, ascii_image)
+
+        root.mainloop()
+
 
