@@ -1,6 +1,8 @@
 # Cloning / Running
 `git clone git@github.com:joeydwilcher/imgToAscii.git`
+
 `source imgToAscii-env/bin/activate`
+
 `python3 image2ascii.py /path/to/image/file`
 
 # Fonts
