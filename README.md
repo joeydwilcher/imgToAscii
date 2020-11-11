@@ -9,6 +9,7 @@ Monospace fonts are pretty much required to make ascii art look decent, so make 
 For making the images have better width/height ratio, please use Square(http://strlen.com/square/).
 
 # TODOs:
+- Implement multiple character sets for dithering algorithm
 - Implement stucture based ascii art algorithm: http://www.cse.cuhk.edu.hk/~ttwong/papers/asciiart/asciiart.pdf
     - Vectorize image: imlement pypotrace: https://pypi.org/project/pypotrace/
     - Separate into grid

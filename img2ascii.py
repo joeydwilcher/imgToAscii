@@ -2,9 +2,15 @@ import sys
 import traceback
 import tkinter as tk
 import tkinter.font as font
-from PIL import Image
+from tkinter import *
+from PIL import Image, ImageTk
 
-ASCII_CHARS = ['.', ',', ':', ';', '-', '+', '|', 'V', 'N', 'M']
+# Ascii character standard ramp from black -> white, source: http://paulbourke.net/dataformats/asciiart/
+# "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'. "
+# kinda trash tbh
+#ASCII_CHARS_STANDARD = ['$','@','B','%','8','&','W','M','#','*','o','a','h','k','b','d','p','q','w','m','Z','O','0','Q','L','C','J','U','Y','X','z','c','v','u','n','x','r','j','f','t','/','\\','|','(',')','1','{','}','[',']','?','-','_','+','~','<','>','i','!','l','I',';',':',',','"','^','`','\'','.',' ']
+# looks better imo
+ASCII_CHARS_NORMALIZED = ['@', '%', '#', '*', '+', '=', '-', ':', '.', ' ']
 DEFAULT_WIDTH = 150
 
 def scale_image(image, new_width=DEFAULT_WIDTH):
@@ -18,14 +24,19 @@ def scale_image(image, new_width=DEFAULT_WIDTH):
 def convert_to_grayscale(image):
     return image.convert('L')
 
-def map_pixels_to_ascii_chars(image, range_width=25):
+def map_pixels_to_ascii_chars(image):
     pixels_in_image = list(image.getdata())
 
-    #print("".join(str(pixels_in_image)))
-
-    pixels_to_chars = [ASCII_CHARS[int(pixel_value/range_width)-1] for pixel_value in pixels_in_image]
+    depth = len(ASCII_CHARS_NORMALIZED) - 1
+    
+    pixels_to_chars = [ASCII_CHARS_NORMALIZED[best_match_dither(pixel_value, depth)] for pixel_value in pixels_in_image]
 
     return "".join(pixels_to_chars)
+
+def best_match_dither(pixel_brightness, depth):
+    # debug
+    print(f'Brightness {pixel_brightness}, Depth {depth}, Index {int(depth*(pixel_brightness/255))}')
+    return int(depth*(pixel_brightness/255))
 
 def convert_image(image, new_width=DEFAULT_WIDTH):
     image = scale_image(image)
@@ -68,6 +79,15 @@ if __name__=='__main__':
         text.pack()
         text.insert(tk.END, ascii_image)
 
+        #debug grayscale
+        debugTop = Toplevel()
+        debugTop.title('Grayscale')
+        debugTop.wm_geometry('300x300')
+        debugTop.resizable(width = True, height = True)
+
+        debugImage = ImageTk.PhotoImage(convert_to_grayscale(image))
+        panel = Label(debugTop, image = debugImage)
+        panel.image = debugImage
+        panel.grid(row=2)
+
         root.mainloop()
-
-
