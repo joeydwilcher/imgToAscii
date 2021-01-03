@@ -13,7 +13,7 @@ from PIL import Image, ImageTk
 ASCII_CHARS_NORMALIZED = ['@', '%', '#', '*', '+', '=', '-', ':', '.', ' ']
 DEFAULT_WIDTH = 150
 
-def scale_image(image, new_width=DEFAULT_WIDTH):
+def scale_image(image, new_width):
     (original_width, original_height) = image.size
     aspect_ratio = original_height/float(original_width)
     new_height = int(aspect_ratio * new_width)
@@ -39,7 +39,7 @@ def best_match_dither(pixel_brightness, depth):
     return int(depth*(pixel_brightness/255))
 
 def convert_image(image, new_width=DEFAULT_WIDTH):
-    image = scale_image(image)
+    image = scale_image(image, new_width)
     image = convert_to_grayscale(image)
 
     pixels_to_chars = map_pixels_to_ascii_chars(image)
@@ -59,7 +59,14 @@ if __name__=='__main__':
             traceback.print_exc()
             exit("Unable to open image file")
 
-        ascii_image = convert_image(image)
+        # Set new width
+        try:
+            new_width = int(sys.argv[2])
+        except:
+            # No width given, set to default
+            new_width = DEFAULT_WIDTH
+
+        ascii_image = convert_image(image, new_width)
         print(ascii_image)
 
         font_size=12
@@ -71,11 +78,11 @@ if __name__=='__main__':
 
         (original_width, original_height) = image.size
         aspect_ratio = original_height/float(original_width)
-        new_height = int(aspect_ratio * DEFAULT_WIDTH)
+        new_height = int(aspect_ratio * new_width)
 
-        root.geometry(f"{new_height}x{DEFAULT_WIDTH}")
+        root.geometry(f"300x300")
 
-        text = tk.Text(root, height=(new_height * font_size), width=(DEFAULT_WIDTH * font_size), font=asciiFont)
+        text = tk.Text(root, height=(new_height * font_size), width=(new_width * font_size), font=asciiFont)
         text.pack()
         text.insert(tk.END, ascii_image)
 
